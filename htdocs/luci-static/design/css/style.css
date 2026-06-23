@@ -50,6 +50,7 @@
     --model_background: #ffffff;
     --model_text_color: #333333;
     --scrollbar_color:#d0d0d0;
+    --sectionbg_rgb: 255, 255, 255;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -92,6 +93,7 @@
     --model_background: #2c2c2e;
     --model_text_color: #fefefe;
     --scrollbar_color:#4a4a4a;
+    --sectionbg_rgb: 28, 28, 30;
   }
 }
 
@@ -132,6 +134,7 @@ body.design-dark {
     --model_background: #2c2c2e;
     --model_text_color: #fefefe;
     --scrollbar_color: #4a4a4a;
+    --sectionbg_rgb: 28, 28, 30;
 }
 
 body.design-light {
@@ -171,6 +174,7 @@ body.design-light {
     --model_background: #ffffff;
     --model_text_color: #333333;
     --scrollbar_color: #d0d0d0;
+    --sectionbg_rgb: 255, 255, 255;
 }
 
 html, body {
@@ -190,6 +194,14 @@ body.design-wallpaper .main > .main-left {
     background-color: var(--navbg_color);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
+}
+
+body.design-wallpaper .main-right .cbi-section,
+body.design-wallpaper .main-right .node,
+body.design-wallpaper .main-right .dc-card {
+    background-color: rgba(var(--sectionbg_rgb, 30,30,30), 0.72) !important;
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
 }
 
 @font-face {
@@ -733,6 +745,12 @@ header > .fill > .container > .status > * {
 	color: var(--progressbar_color);
 }
 
+[data-indicator] {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
 span[data-indicator="uci-changes"] {
     font-size: .8rem;
 	transition: all .3s;
@@ -784,7 +802,7 @@ span[data-indicator="uci-changes"] {
 
 .main > .main-left > .nav > li {
     cursor: pointer;
-    padding-top:6px;
+    padding-top: 4px;
 }
 
 .main > .main-left > .nav > li a {
@@ -795,13 +813,16 @@ span[data-indicator="uci-changes"] {
     font-weight: bold;
     font-size: 1.1rem;
     transition: all 0.2s;
+    padding: 0.5rem 0.5rem 0.5rem 2.5rem;
 }
 
-.main > .main-left > .nav > .slide,
-.main > .main-left > .nav > li:last-child a
-{
+.main > .main-left > .nav > .slide {
     padding: 0;
-    padding-top:8px;
+    padding-top: 4px;
+}
+
+.main > .main-left > .nav > li:last-child a {
+    padding: 0.5rem 0.5rem 0.5rem 2.5rem;
 }
 
 .main > .main-left > .nav > .slide > ul {
@@ -839,7 +860,9 @@ span[data-indicator="uci-changes"] {
 .main > .main-left > .nav > .slide > a:before,
 .main > .main-left > .nav > li > a:before {
     display: inline-block;
-    left:-10px;
+    width: 1.6rem;
+    margin-left: -2rem;
+    margin-right: 0.4rem;
     top: 1px;
     position: relative;
     font-family: "design" !important;
@@ -848,6 +871,8 @@ span[data-indicator="uci-changes"] {
     speak: none;
     font-size: 1.2rem !important;
     -webkit-font-smoothing: antialiased;
+    text-align: center;
+    content: "\e6b9";
 }
 
 .main > .main-left > .nav > .slide > a[data-title="Status"]:before {
@@ -906,16 +931,38 @@ span[data-indicator="uci-changes"] {
     content: "\e676";
 }
 
-.main > .main-left > .nav > li > a[data-title="Logout"] {
-    padding: 0.675rem 0 0.675rem 2.5rem;
+.main > .main-left > .nav > li > a[data-title="Dashboard"]:before,
+.main > .main-left > .nav > .slide > a[data-title="Dashboard"]:before {
+    content: "\e764";
 }
 
-.main > .main-left > .nav > li > a[data-title="Logout"]:before {
-    content: "\e641";
+.main > .main-left > .nav > li > a[data-title="QuickStart"]:before {
+    content: "\e6b8";
+}
+
+.main > .main-left > .nav > li > a[data-title="NetworkGuide"]:before {
+    content: "\e719";
+}
+
+.main > .main-left > .nav > li > a[data-title="Modem"]:before,
+.main > .main-left > .nav > .slide > a[data-title="Modem"]:before {
+    content: "\e67e";
+}
+
+.main > .main-left > .nav > li > a[data-title="Logout"],
+.main > .main-left > .nav > li > a[data-title="Log out"],
+.main > .main-left > .nav > li > a[href*="/logout"] {
+    padding-left: 2.5rem;
+}
+
+.main > .main-left > .nav > li > a[data-title="Logout"]:before,
+.main > .main-left > .nav > li > a[data-title="Log out"]:before,
+.main > .main-left > .nav > li > a[href*="/logout"]:before {
+    content: "\e78c";
 }
 
 .main > .main-left > .nav > li > a[data-title="Reboot"] {
-    padding: 6px 25px;
+    padding-left: 2.5rem;
 }
 .main > .main-left > .nav > li > a[data-title="Reboot"]:before {
     content: "\e004";

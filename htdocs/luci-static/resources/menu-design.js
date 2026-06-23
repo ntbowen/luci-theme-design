@@ -16,6 +16,7 @@ return baseclass.extend({
 	},
 
 	applyDesignConfig: function() {
+		var self = this;
 		fetch('/luci-static/design/config.json?_=' + Date.now())
 			.then(function(r) { return r.ok ? r.json() : null; })
 			.catch(function() { return null; })
@@ -55,9 +56,11 @@ return baseclass.extend({
 					root.style.setProperty('--bg', cfg.bg_color);
 				}
 
-				if (cfg.wallpaper_url && /^(https?:\/\/|\/)/.test(cfg.wallpaper_url)) {
-					root.style.setProperty('--bg-image', "url('" + cfg.wallpaper_url + "')");
-					body.classList.add('design-wallpaper');
+				var mode = cfg.wallpaper_mode || '';
+				if (mode === 'bing_daily' || mode === 'bing_random') {
+					self.applyBingWallpaper(cfg, root, body);
+				} else if (cfg.wallpaper_url && /^(https?:\/\/|\/)/.test(cfg.wallpaper_url)) {
+					self.setWallpaper(cfg.wallpaper_url, root, body);
 				}
 			});
 	},
@@ -255,6 +258,51 @@ return baseclass.extend({
 			container.appendChild(this.renderTabMenu(activeNode, url + '/' + activeNode.name, l));
 
 		return ul;
+	},
+
+	setWallpaper: function(url, root, body) {
+		if (!url || !/^(https?:\/\/|\/)/.test(url)) return;
+		root.style.setProperty('--bg-image', "url('" + url + "')");
+		body.classList.add('design-wallpaper');
+	},
+
+	applyBingWallpaper: function(cfg, root, body) {
+		var self = this;
+		var isRandom = cfg.wallpaper_mode === 'bing_random';
+		var cacheKey = 'design_bing_' + (isRandom ? 'random' : 'daily');
+		var cacheTimeKey = cacheKey + '_ts';
+		var interval = parseInt(cfg.wallpaper_interval || '0', 10) * 3600 * 1000;
+		var cached = localStorage.getItem(cacheKey);
+		var cachedTs = parseInt(localStorage.getItem(cacheTimeKey) || '0', 10);
+		var now = Date.now();
+
+		if (cached && (!interval || (now - cachedTs) < interval)) {
+			self.setWallpaper(cached, root, body);
+			return;
+		}
+
+		fetch('https://bing.com/HPImageArchive.aspx?format=js&idx=0&n=30&mkt=zh-CN')
+			.then(function(r) { return r.json(); })
+			.then(function(data) {
+				if (!data.images || !data.images.length) return;
+				var img = isRandom
+					? data.images[Math.floor(Math.random() * data.images.length)]
+					: data.images[0];
+				var url = 'https://bing.com' + img.url;
+				localStorage.setItem(cacheKey, url);
+				localStorage.setItem(cacheTimeKey, String(now));
+				self.setWallpaper(url, root, body);
+			})
+			.catch(function() {
+				if (cached) self.setWallpaper(cached, root, body);
+			});
+
+		if (interval > 0) {
+			setInterval(function() {
+				localStorage.removeItem(cacheTimeKey);
+				self.applyBingWallpaper(cfg, root, body);
+			}, interval);
+		}
 	},
 
 	handleSidebarToggle: function(ev) {

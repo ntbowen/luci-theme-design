@@ -1,0 +1,205 @@
+<%#
+ Design theme sysauth page
+-%>
+<%
+    local http  = require "luci.http"
+    local ver   = require "luci.version"
+    http.prepare_content("text/html; charset=UTF-8")
+
+    local design_mode     = "normal"
+    local design_accent   = ""
+    local design_bgcolor  = ""
+    local design_wallpaper = ""
+    local uci_ok, uci_mod = pcall(require, "luci.model.uci")
+    if uci_ok then
+        local cursor = uci_mod.cursor()
+        design_mode      = cursor:get_first("design", "global", "mode")         or "normal"
+        design_accent    = cursor:get_first("design", "global", "accent_color") or ""
+        design_bgcolor   = cursor:get_first("design", "global", "bg_color")     or ""
+        design_wallpaper = cursor:get_first("design", "global", "wallpaper_url") or ""
+    end
+    local function is_safe_color(s)
+        return s and (s:match("^#?[0-9a-fA-F]+$") or s:match("^rgb"))
+    end
+    local function is_safe_url(s)
+        return s and #s > 0 and not s:match("[<>\"']") and (s:match("^https?://") or s:match("^/"))
+    end
+    local fuser = http.formvalue("luci_username")
+-%>
+<!DOCTYPE html>
+<html lang="<%=luci.i18n.context.lang%>">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+<title><%:Authorization Required%></title>
+<link rel="stylesheet" href="<%=media%>/css/style.css?v=<%=ver.luciversion%>">
+<% if is_safe_color(design_accent) or is_safe_color(design_bgcolor) or is_safe_url(design_wallpaper) then %>
+<style>
+    :root {
+<%  if is_safe_color(design_accent) then %>
+        --active_color: <%=design_accent%>;
+        --progressbar: <%=design_accent%>;
+<%  end %>
+<%  if is_safe_color(design_bgcolor) then %>
+        --bg: <%=design_bgcolor%>;
+<%  end %>
+<%  if is_safe_url(design_wallpaper) then %>
+        --bg-image: url('<%=design_wallpaper%>');
+<%  end %>
+    }
+</style>
+<% end %>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+    height: 100%;
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: var(--bg_color, #1a1a2e);
+    background-image: var(--bg-image, none);
+    background-size: cover;
+    background-position: center;
+}
+
+.login-card {
+    background: var(--cardsbg_color, rgba(30,30,50,0.85));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 18px;
+    padding: 2.5rem 2rem 2rem;
+    width: 340px;
+    max-width: calc(100vw - 2rem);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.login-title {
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--active_color);
+    margin-bottom: 0.4rem;
+}
+
+.login-desc {
+    text-align: center;
+    font-size: .85rem;
+    color: var(--text_color);
+    margin-bottom: 1.6rem;
+    opacity: .8;
+}
+
+.login-alert {
+    border: 1px solid var(--active_color);
+    border-radius: 8px;
+    padding: .6rem .8rem;
+    font-size: .85rem;
+    color: var(--active_color);
+    margin-bottom: 1rem;
+    text-align: center;
+    opacity: .85;
+}
+
+.input-wrap {
+    display: flex;
+    align-items: center;
+    background: var(--inputbg_color);
+    border: 1px solid var(--border_color, rgba(255,255,255,0.15));
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    transition: border-color .2s;
+}
+
+.input-wrap:focus-within {
+    border-color: var(--active_color);
+}
+
+.input-icon {
+    font-family: "design" !important;
+    font-style: normal !important;
+    speak: none;
+    font-size: 1.15rem;
+    color: var(--active_color);
+    padding-left: 0.85rem;
+    flex-shrink: 0;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+}
+
+.input-wrap input[type="text"],
+.input-wrap input[type="password"] {
+    all: unset;
+    flex: 1;
+    padding: 0.75rem 0.9rem;
+    font-size: 1rem;
+    color: var(--text_color);
+    width: 0;
+    min-width: 0;
+}
+
+.input-wrap input::placeholder {
+    color: var(--text_color);
+    opacity: .4;
+}
+
+.btn-login {
+    display: block;
+    width: 100%;
+    padding: .8rem;
+    background: var(--active_color);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: .5rem;
+    transition: opacity .2s;
+    text-align: center;
+}
+
+.btn-login:hover { opacity: .85; }
+</style>
+</head>
+<body class="<%
+    if design_mode == "dark" then %>design-dark<% elseif design_mode == "light" then %>design-light<% end
+%>">
+
+<div class="login-card">
+    <div class="login-title"><%:Authorization Required%></div>
+    <div class="login-desc"><%:Please enter your username and password.%></div>
+
+    <% if fuser then %>
+    <div class="login-alert"><%:Invalid username and/or password! Please try again.%></div>
+    <% end %>
+
+    <form method="post" action="<%=http.getenv("REQUEST_URI")%>">
+        <div class="input-wrap">
+            <span class="input-icon">&#xe6cb;</span>
+            <input type="text" name="luci_username"
+                   placeholder="<%:Username%>"
+                   value="<%=fuser or "root"%>"
+                   autocomplete="username">
+        </div>
+        <div class="input-wrap">
+            <span class="input-icon">&#xe630;</span>
+            <input type="password" name="luci_password"
+                   placeholder="<%:Password%>"
+                   autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-login"><%:Log in%></button>
+    </form>
+</div>
+
+<script>document.querySelector('input[name="luci_password"]').focus();</script>
+</body>
+</html>
