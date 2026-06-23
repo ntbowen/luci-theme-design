@@ -36,6 +36,9 @@
     --inputtext_color: #76838f;
     --input_border: 1px solid #e4eaec;
     --mainleftbg_color: rgb(255,255,255);
+    --header_bg_color: var(--bgwhite);
+    --sidebar_bg_color: var(--mainleftbg_color);
+    --card_bg_color: var(--sectionbg_color);
     --bttext_color: #fff;
     --badgebg_color: #f7f7f7;
     --badge_border: #e4eaec 1px solid;
@@ -94,6 +97,9 @@
     --model_text_color: #fefefe;
     --scrollbar_color:#4a4a4a;
     --sectionbg_rgb: 28, 28, 30;
+    --header_bg_color: var(--bgwhite);
+    --sidebar_bg_color: var(--mainleftbg_color);
+    --card_bg_color: var(--sectionbg_color);
   }
 }
 
@@ -135,6 +141,9 @@ body.design-dark {
     --model_text_color: #fefefe;
     --scrollbar_color: #4a4a4a;
     --sectionbg_rgb: 28, 28, 30;
+    --header_bg_color: var(--bgwhite);
+    --sidebar_bg_color: var(--mainleftbg_color);
+    --card_bg_color: var(--sectionbg_color);
 }
 
 body.design-light {
@@ -162,6 +171,9 @@ body.design-light {
     --inputtext_color: #333333;
     --input_border: 1px solid #dcdfe6;
     --mainleftbg_color: #f2f3f5;
+    --header_bg_color: var(--bgwhite);
+    --sidebar_bg_color: var(--mainleftbg_color);
+    --card_bg_color: var(--sectionbg_color);
     --bttext_color: #333333;
     --badgebg_color: #333333;
     --badge_border: #e6e9ef 1px solid;
@@ -449,7 +461,7 @@ header, .main {
 }
 
 header {
-    background-color: var(--bgwhite);
+    background-color: var(--header_bg_color, var(--bgwhite));
     box-shadow: 17rem 2px 4px rgba(0, 0, 0, 0.08);
     transition: box-shadow 0.2s;
     height: 55px;
@@ -549,7 +561,7 @@ small {
 .main-left {
     float: left;
     width: 17rem;
-    background-color: var(--mainleftbg_color);
+    background-color: var(--sidebar_bg_color, var(--mainleftbg_color));
     overflow-x: auto;
     height: calc(100% - 3.5rem);
     position: fixed;

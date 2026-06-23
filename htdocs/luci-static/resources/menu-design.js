@@ -56,6 +56,21 @@ return baseclass.extend({
 					root.style.setProperty('--bg', cfg.bg_color);
 				}
 
+				if (cfg.header_color && /^#[0-9a-fA-F]{3,6}$/.test(cfg.header_color)) {
+					root.style.setProperty('--header_bg_color', cfg.header_color);
+				}
+
+				if (cfg.sidebar_color && /^#[0-9a-fA-F]{3,6}$/.test(cfg.sidebar_color)) {
+					root.style.setProperty('--sidebar_bg_color', cfg.sidebar_color);
+					root.style.setProperty('--mainleftbg_color', cfg.sidebar_color);
+				}
+
+				if (cfg.card_color && /^#[0-9a-fA-F]{3,6}$/.test(cfg.card_color)) {
+					root.style.setProperty('--sectionbg_color', cfg.card_color);
+					root.style.setProperty('--sectionbg_color2', cfg.card_color);
+					root.style.setProperty('--card_bg_color', cfg.card_color);
+				}
+
 				var mode = cfg.wallpaper_mode || '';
 				if (mode === 'bing_daily' || mode === 'bing_random') {
 					self.applyBingWallpaper(cfg, root, body);
