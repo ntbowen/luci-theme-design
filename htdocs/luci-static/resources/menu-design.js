@@ -303,7 +303,9 @@ return baseclass.extend({
 				var img = isRandom
 					? data.images[Math.floor(Math.random() * data.images.length)]
 					: data.images[0];
-				var url = 'https://bing.com' + img.url;
+				var url = img.urlbase
+					? 'https://bing.com' + img.urlbase + '_1920x1080.jpg'
+					: 'https://bing.com' + img.url.replace(/_UHD(.\w+)/, '_1920x1080$1').split('&rf=')[0];
 				localStorage.setItem(cacheKey, url);
 				localStorage.setItem(cacheTimeKey, String(now));
 				self.setWallpaper(url, root, body);
